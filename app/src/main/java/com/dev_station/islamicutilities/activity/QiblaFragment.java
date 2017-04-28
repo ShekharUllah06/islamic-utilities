@@ -15,17 +15,39 @@ package com.dev_station.islamicutilities.activity;
 /**
  * Created by Ravi on 29/07/15.
  */
+
+import android.Manifest;
 import android.app.Activity;
+import android.content.Context;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.dev_station.islamicutilities.R;
+import com.gun0912.tedpermission.PermissionListener;
+import com.gun0912.tedpermission.TedPermission;
+
+import java.util.ArrayList;
 
 
-public class QiblaFragment extends Fragment {
+public class QiblaFragment extends Fragment implements LocationListener {
+    protected LocationManager locationManager;
+    protected LocationListener locationListener;
+    protected Context context;
+    TextView txtLat;
+    String lat;
+    String provider;
+    protected String latitude,longitude;
+    protected boolean gps_enabled,network_enabled;
 
     public QiblaFragment() {
         // Required empty public constructor
@@ -40,7 +62,35 @@ public class QiblaFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_qibla, container, false);
+        final View rootView = inflater.inflate(R.layout.fragment_qibla, container, false);
+
+        PermissionListener permissionlistener = new PermissionListener() {
+            @Override
+            public void onPermissionGranted() {
+
+                txtLat = (TextView)rootView.findViewById(R.id.textview1);
+
+                locationManager = (LocationManager)getActivity().getSystemService(Context.LOCATION_SERVICE);
+                if (ContextCompat.checkSelfPermission(getActivity(),Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+                        || ContextCompat.checkSelfPermission(getActivity(),Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED){
+                    locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0,QiblaFragment.this);
+                }
+
+            }
+
+            @Override
+            public void onPermissionDenied(ArrayList<String> deniedPermissions) {
+
+            }
+        };
+
+        new TedPermission((AppCompatActivity)getActivity())
+                .setPermissionListener(permissionlistener)
+                .setPermissions(Manifest.permission.ACCESS_FINE_LOCATION)
+                .setDeniedMessage("If you reject permission,you can not use this service\n\nPlease turn on permissions at [Setting] > [Permission]")
+                .setGotoSettingButtonText("setting")
+                .check();
+
 
 
         // Inflate the layout for this fragment
@@ -55,5 +105,26 @@ public class QiblaFragment extends Fragment {
     @Override
     public void onDetach() {
         super.onDetach();
+    }
+
+    @Override
+    public void onLocationChanged(Location location) {
+        //txtLat = (TextView)rootView.findViewById(R.id.textview1);
+        txtLat.setText("Latitude:" + location.getLatitude() + ", Longitude:" + location.getLongitude());
+    }
+
+    @Override
+    public void onStatusChanged(String provider, int status, Bundle extras) {
+
+    }
+
+    @Override
+    public void onProviderEnabled(String provider) {
+
+    }
+
+    @Override
+    public void onProviderDisabled(String provider) {
+
     }
 }
