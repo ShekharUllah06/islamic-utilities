@@ -12,10 +12,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
-import com.dev_station.islamicutilities.activity.FragmentDrawer;
-import com.dev_station.islamicutilities.activity.FriendsFragment;
-import com.dev_station.islamicutilities.activity.HomeFragment;
-import com.dev_station.islamicutilities.activity.MessagesFragment;
 import com.dev_station.islamicutilities.R;
 
 public class MainActivity extends AppCompatActivity implements FragmentDrawer.FragmentDrawerListener {
@@ -82,8 +78,8 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
         String title = getString(R.string.app_name);
         switch (position) {
             case 0:
-                fragment = new HomeFragment();
-                title = getString(R.string.title_home);
+                fragment = new QiblaFragment();
+                title = getString(R.string.title_qibla);
                 break;
             case 1:
                 fragment = new FriendsFragment();
